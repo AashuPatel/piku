@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Frontend build output
+dist/
+
+# Rust / Tauri build artifacts
+src-tauri/target/
+src-tauri/gen/schemas/
+
+# Internal audits, phase reports, test artifacts, and staging
+.internal/
+
+# Local databases, WAL/SHM sidecars, and backups
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.bak
+*.bak.*
+pet_state.json
+
+# Environment variables, certificates, and secrets
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# OS and editor artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

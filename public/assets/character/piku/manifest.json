@@ -1,0 +1,56 @@
+{
+  "character": "piku",
+  "version": "1.0.0",
+  "assetKind": "placeholder",
+  "frameSize": {
+    "width": 256,
+    "height": 256
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.844
+  },
+  "defaultState": "idle",
+  "states": {
+    "idle": {
+      "frames": 6,
+      "fps": 6,
+      "loop": true,
+      "path": "idle/idle_{nn}.png"
+    },
+    "blink": {
+      "frames": 4,
+      "fps": 10,
+      "loop": false,
+      "path": "blink/blink_{nn}.png",
+      "next": "idle"
+    },
+    "sleep": {
+      "frames": 6,
+      "fps": 4,
+      "loop": true,
+      "path": "sleep/sleep_{nn}.png"
+    },
+    "wave": {
+      "frames": 6,
+      "fps": 9,
+      "loop": false,
+      "path": "wave/wave_{nn}.png",
+      "next": "idle"
+    },
+    "happy": {
+      "frames": 6,
+      "fps": 10,
+      "loop": false,
+      "path": "happy/happy_{nn}.png",
+      "next": "idle"
+    },
+    "click": {
+      "frames": 6,
+      "fps": 12,
+      "loop": false,
+      "path": "click/click_{nn}.png",
+      "next": "idle"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+name: Feature Request
+description: Suggest an idea or improvement for Piku
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like Piku to do?
+      description: Describe the feature or improvement clearly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Why is this helpful?
+      description: Explain how this fits Piku's calm, minimal, local-first design.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or details
+      description: Any trade-offs, mockups, or constraints to keep in mind.

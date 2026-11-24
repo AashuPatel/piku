@@ -1,0 +1,49 @@
+/* Piku Design System v1 — Tokens (from design-system.md §12) */
+:root {
+  --color-bg: #F8F6EF;
+  --color-surface: #FFFEFA;
+  --color-surface-soft: #F0EEE5;
+
+  --color-lime: #E5F2B9;
+  --color-mint: #AEE8C8;
+  --color-sky: #A9DCEC;
+  --color-lavender: #C7B8F0;
+  --color-peach: #F5D5C5;
+
+  --color-text: #45453D;
+  --color-text-secondary: #858477;
+  --color-outline: #E7E4D9;
+
+  /* Derived soft UI tints (strictly within the approved pastel family) */
+  --color-week-selected: #F2F7E8;
+  --color-heatmap-1: #EDF5D8;
+  --color-heatmap-4: #8FD9B7;
+  --color-today-ring: #76A68D;
+  --color-error: #A6574C;
+
+  --piku-gradient: linear-gradient(180deg, #E5F2B9 0%, #AEE8C8 55%, #A9DCEC 100%);
+  --shadow-card: 0 2px 10px rgba(80, 75, 60, 0.04);
+
+  --font-family: "Nunito", sans-serif;
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 48px;
+
+  --motion-fast: 150ms;
+  --motion-normal: 220ms;
+  --motion-slow: 320ms;
+
+  --shadow-soft: 0 8px 24px rgba(80, 75, 60, 0.07);
+}
