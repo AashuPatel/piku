@@ -9,7 +9,7 @@
 A desktop pet that quietly keeps track of the time you spend on your computer.  
 Local-first, private, and open source.
 
-![Windows x64](https://img.shields.io/badge/Windows-10%20%2F%2011%20x64-A9DCEC?style=flat-square&labelColor=F8F6EF&color=45453D)
+![Windows 11 x64 (validated)](https://img.shields.io/badge/Windows-11%20x64%20%28validated%29-A9DCEC?style=flat-square&labelColor=F8F6EF&color=45453D)
 ![Local-First](https://img.shields.io/badge/Storage-Local--First%20SQLite-AEE8C8?style=flat-square&labelColor=F8F6EF&color=45453D)
 ![Open Source](https://img.shields.io/badge/License-MIT-E5F2B9?style=flat-square&labelColor=F8F6EF&color=45453D)
 
@@ -27,17 +27,33 @@ Local-first, private, and open source.
 
 Piku lives quietly on your Windows desktop—above your wallpaper, behind your work—and only opens up when you're curious about how your day went. No dashboards staring at you, no accounts, no cloud sync.
 
-<div align="center">
-
-| Desktop Companion | Today Summary |
-| :---: | :---: |
-| <img src="assets/screenshots/desktop-pet.png" alt="Piku sitting on the Windows desktop" width="220" /><br /><img src="assets/demo/piku-demo.gif" alt="Piku idle, blink, wave, and happy animations" width="150" /> | <img src="assets/screenshots/today.png" alt="Piku Today screen-time summary" width="320" /> |
-
-| History (Day, Week & Month) | Preferences |
-| :---: | :---: |
-| <img src="assets/screenshots/history-day.png" alt="Piku History 24-hour rhythm and app list" width="320" /> | <img src="assets/screenshots/preferences.png" alt="Piku Preferences panel" width="320" /> |
-
-</div>
+<table>
+  <tr>
+    <th align="center">Desktop Companion</th>
+    <th align="center">Today Summary</th>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">
+      <img src="assets/screenshots/desktop-pet.png" alt="Piku sitting on the Windows desktop" width="220" /><br /><br />
+      <img src="assets/demo/piku-demo.gif" alt="Piku idle, blink, wave, and happy animations" width="150" />
+    </td>
+    <td align="center" valign="middle">
+      <img src="assets/screenshots/today.png" alt="Piku Today screen-time summary" width="320" />
+    </td>
+  </tr>
+  <tr>
+    <th align="center">History (Day, Week &amp; Month)</th>
+    <th align="center">Preferences</th>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">
+      <img src="assets/screenshots/history-day.png" alt="Piku History 24-hour rhythm and app list" width="320" />
+    </td>
+    <td align="center" valign="middle">
+      <img src="assets/screenshots/preferences.png" alt="Piku Preferences panel" width="320" />
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -169,7 +185,7 @@ Read more in [docs/privacy.md](docs/privacy.md) and [docs/data-storage.md](docs/
 
 ## Build from Source
 
-**Prerequisites (Windows 10/11 x64):** Node.js 20+, `pnpm`, Rust stable toolchain (`x86_64-pc-windows-msvc`), Visual Studio C++ Build Tools, and Microsoft Edge WebView2 Runtime.
+**Prerequisites (Windows 11 x64 validated):** Node.js 20+, `pnpm`, Rust stable toolchain (`x86_64-pc-windows-msvc`), Visual Studio C++ Build Tools, and Microsoft Edge WebView2 Runtime.
 
 ```powershell
 # 1. Install frontend dependencies
