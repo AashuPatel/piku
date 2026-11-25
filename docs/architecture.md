@@ -72,9 +72,9 @@ Piku manages three lightweight Tauri windows and a system tray icon:
 ## 4. Rendering & Resource Efficiency
 
 - **Timer-driven sprite FSM (`src/animation/controller.ts`):** Uses `setTimeout` at each animation clip's native frame rate (4–12 fps) instead of a continuous 60 fps `requestAnimationFrame` loop.
-- **Conditional panel sprite loading (`src/components/panel/GreetingPanel.tsx` & `spriteStore.ts`):**
-  - The desktop pet loads all 6 clips (34 frames) plus a 64×64 alpha hit-test mask.
-  - Greeting and Today load only the 4 clips needed by the panel (`idle`, `blink`, `wave`, `happy` — 22 frames) with no hit-mask canvas.
+- **Conditional & lazy sprite loading (`src/components/panel/GreetingPanel.tsx`, `PetWindow.tsx` & `spriteStore.ts`):**
+  - The desktop pet preloads 9 core interactive/lifecycle clips (54 frames) plus a 64×64 alpha hit-test mask at startup, and lazily decodes the remaining 15 ambient/expression clips on first use (24 clips / 144 frames total).
+  - Greeting and Today load only the 4 clips needed by the panel (`idle`, `blink`, `wave`, `happy` — 24 frames) with no hit-mask canvas.
   - Opening **History** or **Preferences** directly loads **0 sprites** and starts **0 animation timers**.
   - Switching from Today into History or Preferences immediately suspends the panel `AnimationController` (clearing all timers) and resumes cleanly on return. Closing the panel disposes all `ImageBitmap` objects via `ImageBitmap.close()`.
 

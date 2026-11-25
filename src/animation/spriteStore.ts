@@ -16,8 +16,10 @@ export interface SpriteLoadOptions {
 export class SpriteStore {
   public readonly manifest: CharacterManifest;
   private readonly frames = new Map<AnimationStateName, (DrawableSprite | null)[]>();
+  private readonly pendingLoads = new Map<AnimationStateName, Promise<void>>();
   private fallbackFrame: DrawableSprite | null = null;
   private hitMask: Uint8Array | null = null;
+  private disposed = false;
 
   private constructor(manifest: CharacterManifest) {
     this.manifest = manifest;
@@ -34,6 +36,48 @@ export class SpriteStore {
     return store;
   }
 
+  public hasStateLoaded(state: AnimationStateName): boolean {
+    const list = this.frames.get(state);
+    return Boolean(list && list.length > 0);
+  }
+
+  public async ensureStateLoaded(state: AnimationStateName): Promise<void> {
+    if (this.disposed || !(state in this.manifest.states)) return;
+    if (this.hasStateLoaded(state)) return;
+
+    const existing = this.pendingLoads.get(state);
+    if (existing) {
+      await existing;
+      return;
+    }
+
+    const task = (async () => {
+      const cfg = this.manifest.states[state];
+      const urls: string[] = [];
+      for (let i = 1; i <= cfg.frames; i++) {
+        const nn = String(i).padStart(2, "0");
+        urls.push(`${ASSET_BASE}${cfg.path.replace("{nn}", nn)}`);
+      }
+      const decoded = await Promise.all(urls.map((url) => this.loadSprite(url)));
+      if (this.disposed) {
+        for (const bmp of decoded) {
+          if (bmp && typeof ImageBitmap !== "undefined" && bmp instanceof ImageBitmap) {
+            bmp.close();
+          }
+        }
+        return;
+      }
+      this.frames.set(state, decoded);
+    })();
+
+    this.pendingLoads.set(state, task);
+    try {
+      await task;
+    } finally {
+      this.pendingLoads.delete(state);
+    }
+  }
+
   private async preloadStates(
     requestedStates: readonly AnimationStateName[] | undefined,
     shouldBuildHitMask: boolean
@@ -48,19 +92,7 @@ export class SpriteStore {
         )
       : allStates;
 
-    await Promise.all(
-      stateNames.map(async (stateName) => {
-        const cfg = this.manifest.states[stateName];
-        const urls: string[] = [];
-        for (let i = 1; i <= cfg.frames; i++) {
-          const nn = String(i).padStart(2, "0");
-          urls.push(`${ASSET_BASE}${cfg.path.replace("{nn}", nn)}`);
-        }
-
-        const decoded = await Promise.all(urls.map((url) => this.loadSprite(url)));
-        this.frames.set(stateName, decoded);
-      })
-    );
+    await Promise.all(stateNames.map((stateName) => this.ensureStateLoaded(stateName)));
 
     const idleFrames = this.frames.get(this.manifest.defaultState);
     this.fallbackFrame = idleFrames?.[0] ?? null;
@@ -124,6 +156,8 @@ export class SpriteStore {
   }
 
   public dispose(): void {
+    this.disposed = true;
+    this.pendingLoads.clear();
     for (const list of this.frames.values()) {
       for (const bmp of list) {
         if (bmp && typeof ImageBitmap !== "undefined" && bmp instanceof ImageBitmap) {

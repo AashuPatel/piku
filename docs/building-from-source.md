@@ -68,7 +68,7 @@ pnpm tauri build --bundles nsis
 
 Outputs:
 - **Release executable:** `src-tauri/target/release/piku.exe`
-- **Windows x64 NSIS installer:** `src-tauri/target/release/bundle/nsis/Piku_0.1.0_x64-setup.exe`
+- **Windows x64 NSIS installer:** `src-tauri/target/release/bundle/nsis/Piku_0.2.0_x64-setup.exe`
 
 *(Note: Tauri downloads NSIS automatically on first bundle build if not already cached locally. Release builds are unsigned by default.)*
 

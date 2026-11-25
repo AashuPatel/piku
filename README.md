@@ -17,7 +17,7 @@ Local-first, private, and open source.
 
 [![Download Piku](https://img.shields.io/badge/Download-Piku-9BCFB2?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/AashuPatel/piku/releases/latest)
 
-<sub>Windows x64 installer &middot; Validated on Windows 11 x64 &middot; Early controlled beta (v0.1.0)</sub>
+<sub>Windows x64 installer &middot; Validated on Windows 11 x64 &middot; Early controlled beta (v0.2.0)</sub>
 
 </div>
 
@@ -166,7 +166,7 @@ Read more in [docs/privacy.md](docs/privacy.md) and [docs/data-storage.md](docs/
 ## Installation
 
 1. Open [GitHub Releases](https://github.com/AashuPatel/piku/releases/latest).
-2. Download the latest Windows x64 installer (`Piku_0.1.0_x64-setup.exe`) and optionally verify its hash against `SHA256SUMS.txt`.
+2. Download the latest Windows x64 installer (`Piku_0.2.0_x64-setup.exe`) and optionally verify its hash against `SHA256SUMS.txt`.
 3. Run the installer. It installs per-user into `%LOCALAPPDATA%\Piku` without requiring administrator privileges.
 4. Launch **Piku** from the Start Menu or finish screen.
 5. Click Piku on your desktop or find the Piku icon in the Windows system tray to view your day, pause tracking, or open **Preferences**.
@@ -209,22 +209,21 @@ See [docs/building-from-source.md](docs/building-from-source.md) for full develo
 
 ## Roadmap
 
-**Implemented (v0.1.0 Controlled Beta)**
-- Transparent Windows desktop-layer pet with 6 sprite animations, drag persistence, and tray controls
+**Implemented (v0.2.0 Beta)**
+- Transparent Windows desktop-layer pet with 24 hand-illustrated animations (144 frames), smooth drag & position persistence, yawn-to-sleep, late-night blanket state, ambient moments, and tray controls
 - Accurate 1 Hz foreground & UWP tracking with shell exclusions and live idle-tail rollback
-- Today summary, Day/Week/Month history views, and Preferences
+- Today summary, Day/Week/Month history views (with empty/error illustrations), and Preferences
 - Local SQLite WAL storage, flush serialization, shutdown checkpoints, rolling backups, and corruption quarantine
-- Per-user Windows x64 NSIS installer with startup Registry reconciliation and data-preserving uninstall
+- Per-user Windows x64 NSIS installer with launch-on-startup enabled by default and data-preserving uninstall
 
 **Planned**
 - Once-daily in-session rolling backup refresh while Piku remains open continuously across multiple days
-- Physical multi-monitor hardware validation and fresh-machine install/upgrade verification
+- Physical multi-monitor hardware validation and fresh-machine install verification
 - Code-signed Windows release binaries
 
 **Under Consideration**
 - Optional user-managed application exclusion list in Preferences
 - CSV / JSON local export of screen-time history
-- Production hand-illustrated character sprite pack replacing the initial programmatic sprite set
 
 ---
 

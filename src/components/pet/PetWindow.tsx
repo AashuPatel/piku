@@ -11,6 +11,19 @@ const DEFAULT_PET_LOGICAL_SIZE = 128;
 const DRAG_THRESHOLD_PX = 6;
 const CLICK_PANEL_DELAY_MS = 160;
 
+/** Core interactive & lifecycle states preloaded immediately; ambient expressions load on demand. */
+const CORE_PET_STATES: readonly AnimationStateName[] = [
+  "idle",
+  "blink",
+  "wave",
+  "happy",
+  "sleep",
+  "click",
+  "drag",
+  "yawn",
+  "late_night",
+];
+
 interface PetRuntimeSnapshot {
   tracking_paused: boolean;
   pet_visible: boolean;
@@ -73,7 +86,7 @@ export function PetWindow() {
 
     const init = async () => {
       const [store, runtime, settings] = await Promise.all([
-        SpriteStore.load(),
+        SpriteStore.load({ states: CORE_PET_STATES }),
         invoke<PetRuntimeSnapshot>("get_pet_runtime").catch(() => ({
           tracking_paused: false,
           pet_visible: true,
@@ -118,7 +131,11 @@ export function PetWindow() {
 
       unlistenHint = await listen<StateHintPayload>("pet:state-hint", (event) => {
         const kind = event.payload.kind;
-        if (kind === "paused" || kind === "idle_sleep" || kind === "late_night") {
+        if (kind === "late_night") {
+          controller.setBaseState("late_night");
+        } else if (kind === "idle_sleep") {
+          controller.setBaseState("sleep", { transition: "yawn" });
+        } else if (kind === "paused") {
           controller.setBaseState("sleep");
         } else {
           controller.setBaseState("idle");
@@ -219,6 +236,7 @@ export function PetWindow() {
       if (dist <= DRAG_THRESHOLD_PX) return;
       session.dragged = true;
       isDraggingRef.current = true;
+      engine.controller.startDrag();
       void invoke("begin_pet_drag");
     }
 
@@ -239,6 +257,7 @@ export function PetWindow() {
       dragRafRef.current = null;
     }
     isDraggingRef.current = false;
+    engine.controller.endDrag();
     void invoke("end_pet_drag");
   };
 

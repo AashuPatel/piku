@@ -1,0 +1,748 @@
+{
+  "schemaVersion": "2.0.0",
+  "project": "Piku Desktop Pet",
+  "referenceSheet": "assets/piku-character-sheet.png",
+  "dropFolder": "art-source/raw-sheets/",
+  "purpose": "Master specification for generating consistent hand-illustrated Piku sprite sheets (3 animations x 6 frames = 18 sprites per animated sheet; 6 single-frame illustrations per static sheet) so automated slicing, background removal, alignment, and app integration work reliably.",
+
+  "characterStyleLock": {
+    "silhouette": "Soft, slightly imperfect rounded mochi-orb body (subtle hand-drawn organic curve, slightly fuller near the base). Never a sterile geometric circle.",
+    "palette": {
+      "bodyGradientTop": "#E5F2B9",
+      "bodyGradientMid": "#AEE8C8",
+      "bodyGradientBottom": "#A9DCEC",
+      "topLeftHighlight": "#F6F8E2",
+      "outline": "#473527",
+      "sproutLeafFill": "#CEEC72",
+      "sproutLeafTip": "#AEE8A8",
+      "mouthInterior": "#E99482",
+      "blushCheeks": "#F5B8B0",
+      "sparkAccent": "#F2C94C",
+      "cozyBlanketLavender": "#C7B8F0"
+    },
+    "lineArt": "Consistent warm dark brown (#473527) hand-drawn medium-weight outline with rounded stroke ends. Never pure black (#000000). Keep stroke thickness consistent across all 18 cells.",
+    "sprout": "Centered at top crown: short dark brown stem branching into two small pointed oval green leaves tilting left and right.",
+    "face": "Minimalist centered slightly above mid-body: two widely spaced dark brown dot/oval eyes and a tiny curved smile. Open happy/winking mouth shows soft coral-peach (#E99482).",
+    "limbs": "Short thin dark brown stick legs with tiny outward-pointing feet. Stick arms stay hidden/tucked during calm resting poses (idle, blink, sleep) and emerge only for expressive gestures or props.",
+    "groundingShadow": "DO NOT draw ground shadows under Piku. The app renders a dynamic soft shadow on the Canvas so Piku looks clean on both light and dark Windows wallpapers."
+  },
+
+  "sheetFormats": {
+    "animated_3x6": {
+      "description": "3 animations per image, 6 frames per animation = 18 characters total.",
+      "rows": 3,
+      "columns": 6,
+      "totalCells": 18,
+      "readingOrder": "Each row is one complete animation. Frames run strictly left-to-right: Col 1 = Frame 01 through Col 6 = Frame 06.",
+      "recommendedImageSizePx": {
+        "preferred": { "width": 3072, "height": 1536, "cellWidth": 512, "cellHeight": 512 },
+        "compactFallback": { "width": 1536, "height": 768, "cellWidth": 256, "cellHeight": 256 },
+        "aspect3x2Note": "If your image generator only outputs 16:9 or 3:2 (e.g., 1536x1024 or 2752x1536), keep 3 equal-height rows and 6 equal-width columns with generous white margin around every character so the slicer can partition by uniform grid."
+      },
+      "background": {
+        "preferred": "Solid flat pure white (#FFFFFF) — zero paper texture, zero cream backdrop, zero drop shadows, zero rounded boxes behind frames.",
+        "alternative": "True transparent RGBA PNG."
+      },
+      "cellSafeMargins": {
+        "keepInsidePercent": 80,
+        "groundBaselinePercentFromTop": 84.4,
+        "horizontalCenterPercent": 50,
+        "rule": "No sprout tip, waving hand, spark, or zZ letter may cross into an adjacent cell or touch the outer edge of its cell. Keep body scale identical across all 6 frames of a row."
+      }
+    },
+    "static_2x3": {
+      "description": "6 single-frame static illustrations per image (2 rows x 3 columns).",
+      "rows": 2,
+      "columns": 3,
+      "totalCells": 6,
+      "readingOrder": "Row 1 left-to-right (Slots 1, 2, 3), Row 2 left-to-right (Slots 4, 5, 6).",
+      "recommendedImageSizePx": {
+        "preferred": { "width": 1536, "height": 1024, "cellWidth": 512, "cellHeight": 512 },
+        "highRes": { "width": 3072, "height": 2048, "cellWidth": 1024, "cellHeight": 1024 }
+      },
+      "background": {
+        "preferred": "Solid flat pure white (#FFFFFF) or transparent RGBA PNG — no cards, boxes, or shadows."
+      }
+    }
+  },
+
+  "labelingConvention": {
+    "primaryIdentification": "Exact filename matching each sheet's `filename` field below (e.g., `art-source/raw-sheets/sheet_01_core_calm.png`).",
+    "inImageLabelMode": {
+      "recommended": "NO_TEXT_INSIDE_CELLS",
+      "explanation": "Best extraction quality comes from having ZERO text inside the sprite cells and relying on the exact filename + row order (Row 1, Row 2, Row 3). If you want visual labels on the sheet so you can review them easily, use the optional margin-strip rule below.",
+      "optionalLabeledLayout": {
+        "animatedSheets": "Reserve a thin 48px-tall label strip at the TOP of each row (or a 180px-wide column on the far LEFT outside the 6 sprite columns) containing ONLY the exact lowercase ID (e.g. `R1: idle`, `R2: blink`, `R3: sleep`). Keep all label text strictly outside character cells with at least 24px white gap.",
+        "staticSheets": "Place the exact lowercase ID centered in a thin 48px strip directly BELOW each illustration's cell with at least 24px white gap.",
+        "neverDo": [
+          "Never write text overlapping Piku's sprout, feet, sparks, or zZ marks.",
+          "Never draw colored pill boxes or thick borders touching the sprite cells.",
+          "Never mix two different animations in the same row."
+        ]
+      }
+    }
+  },
+
+  "summaryCounts": {
+    "animatedSheets": 8,
+    "totalAnimations": 24,
+    "framesPerAnimation": 6,
+    "totalAnimatedFrames": 144,
+    "staticSheets": 2,
+    "totalStaticIllustrations": 12,
+    "totalImagesToGenerate": 10
+  },
+
+  "animatedSheets": [
+    {
+      "sheetId": "sheet_01_core_calm",
+      "filename": "sheet_01_core_calm.png",
+      "format": "animated_3x6",
+      "category": "core_animations",
+      "priority": "P0",
+      "purpose": "Regenerate core resting animations (replaces current programmatic placeholders).",
+      "animations": [
+        {
+          "row": 1,
+          "id": "idle",
+          "label": "R1: idle",
+          "frames": 6,
+          "fps": 6,
+          "loop": true,
+          "next": null,
+          "appTrigger": "Default ambient desktop breathing state.",
+          "frameGuide": [
+            "F1: Neutral canonical rest pose, relaxed smile, feet planted, arms tucked.",
+            "F2: Subtle inhale start — body lifts slightly taller, sprout leaves perk upward slightly.",
+            "F3: Inhale peak — body tallest/softly buoyant, sprout leaves gently open.",
+            "F4: Exhale start — body eases back toward neutral.",
+            "F5: Soft exhale settle — gentle mochi squash (slightly wider/lower), sprout dips slightly.",
+            "F6: Return smoothly toward neutral F1 for seamless loop."
+          ]
+        },
+        {
+          "row": 2,
+          "id": "blink",
+          "label": "R2: blink",
+          "frames": 6,
+          "fps": 10,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Random natural blink every 3.5–7.5 seconds while idle.",
+          "frameGuide": [
+            "F1: Neutral eyes open (matches idle F1).",
+            "F2: Eyelids half-closed gently.",
+            "F3: Eyes softly closed in cute curved `u u` shut arcs, slight relaxed dip.",
+            "F4: Closed-eye hold (subtle cozy cheek lift).",
+            "F5: Eyes half-opening smoothly.",
+            "F6: Eyes fully open back to neutral (matches idle F1)."
+          ]
+        },
+        {
+          "row": 3,
+          "id": "sleep",
+          "label": "R3: sleep",
+          "frames": 6,
+          "fps": 4,
+          "loop": true,
+          "next": null,
+          "appTrigger": "Idle sleep mode, paused tracking, or late-night nap.",
+          "frameGuide": [
+            "F1: Melted squishy mochi puddle resting low, peaceful closed eyes, small `z` near top-right.",
+            "F2: Gentle slow breath expand, `z` floats slightly higher.",
+            "F3: Soft breath peak, second `Z` appears floating above.",
+            "F4: Slow breath deflate, `z Z` drifts upward-right.",
+            "F5: Deep cozy puddle squish, top `Z` fades/shrinks.",
+            "F6: Gentle settle back toward F1 for seamless nap loop."
+          ]
+        }
+      ]
+    },
+    {
+      "sheetId": "sheet_02_core_reactions",
+      "filename": "sheet_02_core_reactions.png",
+      "format": "animated_3x6",
+      "category": "core_animations",
+      "priority": "P0",
+      "purpose": "Regenerate core interactive reactions (replaces current programmatic placeholders).",
+      "animations": [
+        {
+          "row": 1,
+          "id": "wave",
+          "label": "R1: wave",
+          "frames": 6,
+          "fps": 9,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Greeting panel open, app launch hello, friendly ambient check-in.",
+          "frameGuide": [
+            "F1: Neutral body, right arm begins lifting out to side.",
+            "F2: Arm raised cheerfully, happy smile, slight lean left.",
+            "F3: Wave peak — arm tilted outward with 2–3 tiny golden sparks (#F2C94C).",
+            "F4: Arm swings slightly inward (friendly back-and-forth wave).",
+            "F5: Second cheerful wave out with tiny golden sparks, sprout bobs happily.",
+            "F6: Arm lowers cleanly back to neutral."
+          ]
+        },
+        {
+          "row": 2,
+          "id": "happy",
+          "label": "R2: happy",
+          "frames": 6,
+          "fps": 10,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Opening Today view, positive delight moment.",
+          "frameGuide": [
+            "F1: Cute anticipation crouch/squish before jumping, big smile.",
+            "F2: Takeoff — lifting off baseline, both little arms lifting, joyful open mouth.",
+            "F3: High airborne hop peak — feet off ground, arms up, joyful `^ ^` eyes, golden sparks.",
+            "F4: Descending gently from hop, sprout leaves trailing slightly upward.",
+            "F5: Soft mochi landing squash on baseline, happy cheeks.",
+            "F6: Settle smoothly upright back to neutral."
+          ]
+        },
+        {
+          "row": 3,
+          "id": "click",
+          "label": "R3: click",
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Direct left-click poke on Piku on the desktop.",
+          "frameGuide": [
+            "F1: Instant poke contact — bright startled-cute `> <` eyes, slight tilt.",
+            "F2: Deep playful mochi squish wide and flat, `> w <` face, tiny golden pop marks.",
+            "F3: Rebound stretch upward preparing to spring.",
+            "F4: Cute little spring pop off the ground with joyful smile and sparks.",
+            "F5: Soft landing bounce settle.",
+            "F6: Return cleanly to neutral rest."
+          ]
+        }
+      ]
+    },
+    {
+      "sheetId": "sheet_03_expressions_positive",
+      "filename": "sheet_03_expressions_positive.png",
+      "format": "animated_3x6",
+      "category": "expressions",
+      "priority": "P1",
+      "purpose": "Warm positive emotional expressions for greetings, hover, and milestones.",
+      "animations": [
+        {
+          "row": 1,
+          "id": "excited",
+          "label": "R1: excited",
+          "frames": 6,
+          "fps": 10,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "First active session of the day or milestone celebration.",
+          "frameGuide": [
+            "F1: Perky upright posture, wide sparkling eyes, open happy mouth.",
+            "F2: Quick excited wiggle left with tiny golden sparks around sprout.",
+            "F3: Mini tip-toe bounce up with both tiny arms raised.",
+            "F4: Quick excited wiggle right with sparks.",
+            "F5: Mini tip-toe bounce with winking joyful face.",
+            "F6: Cheerful settle back to neutral."
+          ]
+        },
+        {
+          "row": 2,
+          "id": "content",
+          "label": "R2: content",
+          "frames": 6,
+          "fps": 6,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Calm steady work rhythm or cozy evening ambient moment.",
+          "frameGuide": [
+            "F1: Peaceful gentle sway left, soft curved closed eyes, warm smile.",
+            "F2: Tiny pastel coral heart (#E99482) pops near top-right.",
+            "F3: Gentle sway right, heart floats slightly higher.",
+            "F4: Heart reaches gentle peak, sprout tilts lovingly.",
+            "F5: Sway centers, heart softens/shrinks gently.",
+            "F6: Eyes open peacefully back to neutral."
+          ]
+        },
+        {
+          "row": 3,
+          "id": "blush",
+          "label": "R3: blush",
+          "frames": 6,
+          "fps": 8,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Hovering over Piku for a moment or repeated gentle clicks.",
+          "frameGuide": [
+            "F1: Soft rosy blush ovals (#F5B8B0) appear on both cheeks, shy smile.",
+            "F2: Tiny bashful tilt left, arms tucked close near chin.",
+            "F3: Shy wiggle right, happy curved eyes, warm blush glow.",
+            "F4: Bashful mini-squish with cozy smile.",
+            "F5: Slight stretch back upright, blush still visible.",
+            "F6: Blush fades gently back to neutral."
+          ]
+        }
+      ]
+    },
+    {
+      "sheetId": "sheet_04_expressions_curious",
+      "filename": "sheet_04_expressions_curious.png",
+      "format": "animated_3x6",
+      "category": "expressions",
+      "priority": "P1",
+      "purpose": "Curious, attentive, and startled expressions for live desktop responsiveness.",
+      "animations": [
+        {
+          "row": 1,
+          "id": "curious",
+          "label": "R1: curious",
+          "frames": 6,
+          "fps": 8,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Ambient curiosity check-in or returning after short absence.",
+          "frameGuide": [
+            "F1: Eyes shift slightly right, tiny sprout perk.",
+            "F2: Cute head/body lean right, small dark brown `?` appears at top-right.",
+            "F3: Lean deepens slightly, eyes widen curiously, `?` bobs up.",
+            "F4: Hold curious tilted pose, sprout leaves lean playfully.",
+            "F5: Ease back upright, `?` shrinks away.",
+            "F6: Return to neutral smile."
+          ]
+        },
+        {
+          "row": 2,
+          "id": "thinking",
+          "label": "R2: thinking",
+          "frames": 6,
+          "fps": 6,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Ambient pondering moment while user works steadily.",
+          "frameGuide": [
+            "F1: Eyes glance up-right, tiny mouth turns into thoughtful little `o` / flat curve.",
+            "F2: One tiny stick arm lifts near cheek in pondering pose.",
+            "F3: First tiny thought dot appears top-right, subtle lean.",
+            "F4: Second and third tiny thought dots (`...`) float gently.",
+            "F5: Slight nod of realization, sprout perks.",
+            "F6: Arm tucks away, back to warm neutral smile."
+          ]
+        },
+        {
+          "row": 3,
+          "id": "surprised",
+          "label": "R3: surprised",
+          "frames": 6,
+          "fps": 12,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Waking suddenly from sleep or abrupt desktop activity.",
+          "frameGuide": [
+            "F1: Sudden tiny vertical stretch, wide eyes, tiny `o` mouth.",
+            "F2: Quick little startled hop with 2–3 golden `!` sparks around sprout.",
+            "F3: Peak startled hold, tiny arms flailed out slightly.",
+            "F4: Soft landing, eyes blinking in relief.",
+            "F5: Gentle sheepish smile settle.",
+            "F6: Return smoothly to neutral."
+          ]
+        }
+      ]
+    },
+    {
+      "sheetId": "sheet_05_expressions_cozy",
+      "filename": "sheet_05_expressions_cozy.png",
+      "format": "animated_3x6",
+      "category": "expressions",
+      "priority": "P1",
+      "purpose": "Focused work posture, pre-sleep yawn transition, and playful drag-in-air loop.",
+      "animations": [
+        {
+          "row": 1,
+          "id": "focused",
+          "label": "R1: focused",
+          "frames": 6,
+          "fps": 6,
+          "loop": true,
+          "next": null,
+          "appTrigger": "Long uninterrupted work session (> 25 minutes active focus).",
+          "frameGuide": [
+            "F1: Cute tiny determined eyebrows, steady calm upright posture.",
+            "F2: Gentle focused lean slightly forward/sideways.",
+            "F3: Subtle steady breathing lift, sprout straight and attentive.",
+            "F4: Focused hold with tiny confident smile.",
+            "F5: Gentle exhale settle.",
+            "F6: Smooth return to F1 for calm focus loop."
+          ]
+        },
+        {
+          "row": 2,
+          "id": "yawn",
+          "label": "R2: yawn",
+          "frames": 6,
+          "fps": 7,
+          "loop": false,
+          "next": "sleep",
+          "appTrigger": "Cozy transition right before Piku settles into sleep or late at night.",
+          "frameGuide": [
+            "F1: Droopy half-closed sleepy eyes, slight downward slouch.",
+            "F2: Mouth opens into cute round yawn (`o`), tiny arms stretch upward.",
+            "F3: Full cozy yawn peak — eyes tightly shut happy-sleepy, sprout stretches tall.",
+            "F4: Yawn eases down, soft coral mouth closing.",
+            "F5: Big sleepy exhale, body softens lower toward puddle.",
+            "F6: Heavy-lidded cozy droop ready to enter sleep."
+          ]
+        },
+        {
+          "row": 3,
+          "id": "drag",
+          "label": "R3: drag",
+          "frames": 6,
+          "fps": 8,
+          "loop": true,
+          "next": null,
+          "appTrigger": "While the user is actively dragging Piku across the desktop.",
+          "frameGuide": [
+            "F1: Lifted slightly in air, feet dangling/kicking gently left, curious-surprised smile.",
+            "F2: Tiny arms waving slightly for balance, feet kick right.",
+            "F3: Gentle sway right, sprout leaves fluttering back.",
+            "F4: Cute `o` / delighted expression, feet dangling left.",
+            "F5: Gentle sway left, tiny arms out.",
+            "F6: Return smoothly toward F1 for playful air-dangle loop."
+          ]
+        }
+      ]
+    },
+    {
+      "sheetId": "sheet_06_moments_workday",
+      "filename": "sheet_06_moments_workday.png",
+      "format": "animated_3x6",
+      "category": "contextual_moments",
+      "priority": "P2",
+      "purpose": "Signature contextual moments inspired directly by piku-character-sheet.png.",
+      "animations": [
+        {
+          "row": 1,
+          "id": "moment_working",
+          "label": "R1: moment_working",
+          "frames": 6,
+          "fps": 6,
+          "loop": true,
+          "next": null,
+          "appTrigger": "Ambient moment during active coding/work apps. Bubble: 'Working alongside you ♡'",
+          "frameGuide": [
+            "F1: Piku behind tiny pastel gray laptop with small heart on lid, focused cute eyes.",
+            "F2: Left paw taps keyboard, sprout nods slightly.",
+            "F3: Right paw taps keyboard, subtle happy lean.",
+            "F4: Both paws typing rhythmically, soft smile.",
+            "F5: Brief glance up happily over the laptop screen.",
+            "F6: Back to cozy typing (loops cleanly to F1)."
+          ]
+        },
+        {
+          "row": 2,
+          "id": "moment_break",
+          "label": "R2: moment_break",
+          "frames": 6,
+          "fps": 7,
+          "loop": true,
+          "next": null,
+          "appTrigger": "Ambient moment after sustained work (> 45 min). Bubble: 'Time for a tiny breather?'",
+          "frameGuide": [
+            "F1: Piku wearing cozy pastel headphones, happy eyes, tiny music note at top-right.",
+            "F2: Gentle head-bob down-left to the beat.",
+            "F3: Bounce up-center, music note floats higher.",
+            "F4: Gentle head-bob down-right, second tiny note appears.",
+            "F5: Bounce up-center, cozy closed-eye groove.",
+            "F6: Ease smoothly back to F1 for rhythmic loop."
+          ]
+        },
+        {
+          "row": 3,
+          "id": "moment_late_night",
+          "label": "R3: moment_late_night",
+          "frames": 6,
+          "fps": 5,
+          "loop": true,
+          "next": null,
+          "appTrigger": "Ambient moment after 10:00 PM local time. Bubble: 'Getting late, sleepyhead 🌙'",
+          "frameGuide": [
+            "F1: Piku wrapped snugly inside a soft lavender blanket (#C7B8F0), only face & sprout peeking out.",
+            "F2: Gentle cozy inhale inside blanket, sleepy blinking eyes.",
+            "F3: Subtle sleepy nod forward.",
+            "F4: Peaceful soft smile, sprout tilts drowsily.",
+            "F5: Gentle exhale snuggle deeper into blanket.",
+            "F6: Calm return to F1 for late-night loop."
+          ]
+        }
+      ]
+    },
+    {
+      "sheetId": "sheet_07_moments_delight",
+      "filename": "sheet_07_moments_delight.png",
+      "format": "animated_3x6",
+      "category": "contextual_moments",
+      "priority": "P2",
+      "purpose": "Cozy celebration, snack-time, and warm-drink moments.",
+      "animations": [
+        {
+          "row": 1,
+          "id": "moment_celebrate",
+          "label": "R1: moment_celebrate",
+          "frames": 6,
+          "fps": 10,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Special delight moment or returning to check journal. Bubble: 'You're doing great today! ♡'",
+          "frameGuide": [
+            "F1: Joyful crouch with tiny arms pulled in.",
+            "F2: Arms fling wide up, big happy winking smile, pastel confetti bursts outward.",
+            "F3: Joyful hop peak with pastel mint/peach/yellow confetti dots around Piku.",
+            "F4: Confetti flutters outward while Piku beams.",
+            "F5: Soft landing bounce, confetti gently falls/fades.",
+            "F6: Happy settle back to neutral."
+          ]
+        },
+        {
+          "row": 2,
+          "id": "moment_snack",
+          "label": "R2: moment_snack",
+          "frames": 6,
+          "fps": 8,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Ambient snack-time moment. Bubble: 'It's snack time. I don't make the rules.'",
+          "frameGuide": [
+            "F1: Piku holding a tiny round pastel cookie/biscuit with both tiny arms, excited eyes.",
+            "F2: Takes a tiny happy nibble, crumbs/spark appear.",
+            "F3: Puffy chewing cheeks, closed happy `^ ^` eyes.",
+            "F4: Second cozy chew wiggle left-right.",
+            "F5: Satisfied blissful smile with tiny rosy blush.",
+            "F6: Tucks arms away back to neutral."
+          ]
+        },
+        {
+          "row": 3,
+          "id": "moment_tea",
+          "label": "R3: moment_tea",
+          "frames": 6,
+          "fps": 6,
+          "loop": true,
+          "next": null,
+          "appTrigger": "Morning or cozy afternoon ambient moment. Bubble: 'Sip some water or tea ♡'",
+          "frameGuide": [
+            "F1: Piku holding a tiny warm cream mug with a little wavy steam curl rising.",
+            "F2: Raises mug gently toward mouth, steam drifts up.",
+            "F3: Cozy little sip with peacefully closed eyes.",
+            "F4: Warm blush and happy sigh, steam curls higher.",
+            "F5: Lowers mug gently back to chest.",
+            "F6: Calm warm hold returning to F1."
+          ]
+        }
+      ]
+    },
+    {
+      "sheetId": "sheet_08_moments_ambient",
+      "filename": "sheet_08_moments_ambient.png",
+      "format": "animated_3x6",
+      "category": "contextual_moments",
+      "priority": "P2",
+      "purpose": "Playful quiet desktop life moments (cloud watching, stretching, peeking).",
+      "animations": [
+        {
+          "row": 1,
+          "id": "moment_cloud",
+          "label": "R1: moment_cloud",
+          "frames": 6,
+          "fps": 7,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Ambient moment. Bubble: 'I found a pretty cloud today ☁️'",
+          "frameGuide": [
+            "F1: Piku looking up happily; a tiny fluffy pastel cloud drifts in at top-left.",
+            "F2: Piku points gently upward at the cloud, eyes following it.",
+            "F3: Cloud floats across above Piku's sprout, Piku beams.",
+            "F4: Piku does a tiny happy sway watching the cloud.",
+            "F5: Cloud drifts gently right and shrinks.",
+            "F6: Piku looks forward again with peaceful smile."
+          ]
+        },
+        {
+          "row": 2,
+          "id": "moment_stretch",
+          "label": "R2: moment_stretch",
+          "frames": 6,
+          "fps": 8,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Morning launch or post-idle wake-up stretch. Bubble: 'Big stretch! Ready for today?'",
+          "frameGuide": [
+            "F1: Small pre-stretch crouch, arms tucked.",
+            "F2: Body elongates upward, both tiny arms stretch high above head.",
+            "F3: Full tip-toe tall stretch, happy squinted eyes, sprout leaves wide.",
+            "F4: Gentle side-to-side wiggle at stretch peak.",
+            "F5: Satisfying exhale drop back down onto feet.",
+            "F6: Refreshed bright smile back to neutral."
+          ]
+        },
+        {
+          "row": 3,
+          "id": "moment_peek",
+          "label": "R3: moment_peek",
+          "frames": 6,
+          "fps": 9,
+          "loop": false,
+          "next": "idle",
+          "appTrigger": "Playful idle curiosity moment. Bubble: 'psst...'",
+          "frameGuide": [
+            "F1: Piku crouches slightly, eyes peeking left.",
+            "F2: Leans playfully left, sprout tilted.",
+            "F3: Shifts smoothly through center with mischievous smile.",
+            "F4: Leans playfully right, eyes peeking right.",
+            "F5: Pops upright with cheerful tiny wave/spark.",
+            "F6: Settles neatly back to neutral."
+          ]
+        }
+      ]
+    }
+  ],
+
+  "staticSheets": [
+    {
+      "sheetId": "sheet_09_static_ui_states",
+      "filename": "sheet_09_static_ui_states.png",
+      "format": "static_2x3",
+      "category": "static_ui",
+      "priority": "P3",
+      "purpose": "Single-frame illustrations for empty states, paused states, and special UI headers.",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "col": 1,
+          "id": "static_greeting_morning",
+          "label": "static_greeting_morning",
+          "usage": "Morning greeting card accent or README/promo art",
+          "description": "Bright cheerful waving Piku with a tiny warm golden sunrise sparkle above the sprout."
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "col": 2,
+          "id": "static_greeting_evening",
+          "label": "static_greeting_evening",
+          "usage": "Late-night greeting header illustration",
+          "description": "Cozy calm Piku with a tiny pastel crescent moon and two small stars floating beside the sprout."
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "col": 3,
+          "id": "static_empty_day",
+          "label": "static_empty_day",
+          "usage": "Today view empty state ('A quiet little day so far')",
+          "description": "Peaceful sitting Piku with tiny relaxed smile and a small floating sprout leaf."
+        },
+        {
+          "slot": 4,
+          "row": 2,
+          "col": 1,
+          "id": "static_empty_history",
+          "label": "static_empty_history",
+          "usage": "History view empty state ('No notes for this day')",
+          "description": "Curious Piku peeking gently over a tiny open cream notebook/journal."
+        },
+        {
+          "slot": 5,
+          "row": 2,
+          "col": 2,
+          "id": "static_paused",
+          "label": "static_paused",
+          "usage": "Paused tracking visual cue in Today/Preferences",
+          "description": "Squishy napping Piku puddle with peaceful closed eyes and gentle `z Z`."
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "col": 3,
+          "id": "static_error_gentle",
+          "label": "static_error_gentle",
+          "usage": "Gentle fallback/error state card",
+          "description": "Slightly puzzled cute Piku tilting head with a soft `?` mark — calm, never alarming."
+        }
+      ]
+    },
+    {
+      "sheetId": "sheet_10_static_icons_badges",
+      "filename": "sheet_10_static_icons_badges.png",
+      "format": "static_2x3",
+      "category": "static_icons_and_badges",
+      "priority": "P3",
+      "purpose": "High-clarity Windows app icon, system tray icons, and optional cozy badges.",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "col": 1,
+          "id": "icon_app_master",
+          "label": "icon_app_master",
+          "usage": "Master artwork for Windows icon.ico, 128x128@2x.png, and GitHub logo",
+          "description": "Slightly bolder dark brown outline, centered smiling Piku filling ~82% of the cell for crisp readability from 16px to 256px."
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "col": 2,
+          "id": "icon_tray_active",
+          "label": "icon_tray_active",
+          "usage": "Windows taskbar tray icon (active state, 16x16 / 32x32)",
+          "description": "Simplified high-contrast Piku round body + bold two-leaf sprout + clear dot eyes/smile (no legs so face reads clearly at 16px)."
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "col": 3,
+          "id": "icon_tray_paused",
+          "label": "icon_tray_paused",
+          "usage": "Windows taskbar tray icon (paused/sleeping state, future cue)",
+          "description": "Matching high-contrast simplified Piku body + sprout with peacefully closed `u u` sleeping eyes."
+        },
+        {
+          "slot": 4,
+          "row": 2,
+          "col": 1,
+          "id": "badge_milestone",
+          "label": "badge_milestone",
+          "usage": "Optional cozy sticker/badge for positive milestones",
+          "description": "Proud beaming Piku holding a tiny glowing pastel star."
+        },
+        {
+          "slot": 5,
+          "row": 2,
+          "col": 2,
+          "id": "badge_focus_sprout",
+          "label": "badge_focus_sprout",
+          "usage": "Optional focus-session visual accent",
+          "description": "Calm focused Piku with a tiny glowing lime-mint sprout sparkle."
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "col": 3,
+          "id": "badge_night_owl",
+          "label": "badge_night_owl",
+          "usage": "Optional late-night cozy sticker",
+          "description": "Sleepy cozy Piku wearing a tiny lavender blanket corner with two pastel stars."
+        }
+      ]
+    }
+  ],
+
+  "workflowAfterGeneration": [
+    "1. Save your generated PNG sheets into `art-source/raw-sheets/` using the exact `filename` for each sheet (e.g., `sheet_01_core_calm.png`).",
+    "2. Start with Priority P0 (`sheet_01_core_calm.png` and `sheet_02_core_reactions.png`) so we can immediately test slicing, alignment, and hot-swap the 6 core runtime animations.",
+    "3. Drop in P1 (`sheet_03`..`sheet_05`), P2 (`sheet_06`..`sheet_08`), and P3 (`sheet_09`..`sheet_10`) whenever ready.",
+    "4. Once placed in `art-source/raw-sheets/`, we will run an updated `3x6` / `2x3` sheet extractor, strip white backgrounds, defringe outlines, align every frame cleanly, validate via `validate_assets.py`, and wire all new expressions, moments, and static states into Piku."
+  ]
+}

@@ -594,6 +594,22 @@ button:focus-visible {
   text-align: center;
 }
 
+.state-illustration {
+  display: block;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 8px;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+.state-illustration.is-compact {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 6px;
+}
+
 .today-state-title {
   margin: 0 0 4px;
   font-size: 14px;

@@ -86,8 +86,18 @@ function StateCard({
   text: string;
   onRetry?: () => void;
 }) {
+  const illustrationSrc = onRetry
+    ? "/assets/character/piku/static/error.png"
+    : "/assets/character/piku/static/empty_state.png";
+
   return (
     <div className="history-state-card" role={onRetry ? "alert" : undefined}>
+      <img
+        src={illustrationSrc}
+        alt=""
+        className="state-illustration is-compact"
+        draggable={false}
+      />
       <p className="today-state-title">{title}</p>
       <p className="today-state-text">{text}</p>
       {onRetry && (

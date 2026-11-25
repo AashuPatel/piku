@@ -1,15 +1,32 @@
 import type { SpriteStore } from "./spriteStore";
-import type { AnimationStateName, CuteMoment, FrameSnapshot } from "./types";
+import type {
+  AnimationStateName,
+  BaseAnimationState,
+  CuteMoment,
+  FrameSnapshot,
+} from "./types";
 
 type FrameListener = (snapshot: FrameSnapshot) => void;
 type CuteMomentListener = (moment: CuteMoment) => void;
 
 const AMBIENT_MOMENTS: readonly CuteMoment[] = [
-  { animation: "wave", message: "psst..." },
-  { animation: "happy", message: "I found a pretty cloud today ☁️" },
+  { animation: "peek", message: "psst..." },
+  { animation: "cloud", message: "I found a pretty cloud today ☁️" },
   { animation: "wave", message: "Hehe, hi! ♡" },
-  { animation: "happy", message: "It's snack time. I don't make the rules." },
-  { animation: "wave", message: "You look busy. I'll nap here." },
+  { animation: "snack", message: "It's snack time. I don't make the rules." },
+  { animation: "tea", message: "Cozy sip of tea? 🍵" },
+  { animation: "stretch", message: "Big stretch! Feels nice, right?" },
+  { animation: "working", message: "Typing away right alongside you~" },
+  { animation: "break", message: "Vibing to a cozy little tune ♪" },
+  { animation: "focused", message: "We've got this!" },
+  { animation: "thinking", message: "Hmm... wondering what's next." },
+  { animation: "curious", message: "Ooh, what are we looking at?" },
+  { animation: "content", message: "Just happy sitting here with you ♡" },
+  { animation: "blush", message: "Hehe, cozy vibes today~" },
+  { animation: "excited", message: "Yay! Good energy right now!" },
+  { animation: "celebration", message: "Little cheer for your day!" },
+  { animation: "surprised", message: "Oh! Did you see that?" },
+  { animation: "happy", message: "Hope your day feels gentle ♡" },
 ];
 
 const BLINK_MIN_MS = 3500;
@@ -20,7 +37,16 @@ const CUTE_MAX_MS = 8 * 60 * 1000; // 8 minutes
 export interface ControllerOptions {
   enableRandomBlink?: boolean;
   enableAmbientMoments?: boolean;
-  initialBaseState?: "idle" | "sleep";
+  initialBaseState?: BaseAnimationState;
+}
+
+function isPassiveState(state: AnimationStateName): boolean {
+  return (
+    state === "idle" ||
+    state === "sleep" ||
+    state === "late_night" ||
+    state === "blink"
+  );
 }
 
 /**
@@ -32,12 +58,19 @@ export class AnimationController {
   private readonly enableRandomBlink: boolean;
   private enableAmbientMoments: boolean;
 
-  private baseState: "idle" | "sleep";
+  private baseState: BaseAnimationState;
   private currentState: AnimationStateName;
   private frameIndex = 0;
   private blinkQueued = false;
   private suspended = false;
+  private dragging = false;
+  private preDragSnapshot: {
+    state: AnimationStateName;
+    frameIndex: number;
+    baseState: BaseAnimationState;
+  } | null = null;
   private lastMomentIdx = -1;
+  private transitionSeq = 0;
 
   private frameTimer: number | null = null;
   private blinkTimer: number | null = null;
@@ -57,6 +90,9 @@ export class AnimationController {
   public start(): void {
     this.suspended = false;
     this.notifyFrame();
+    if (this.dragging) {
+      return;
+    }
     this.scheduleNextFrame();
     this.scheduleBlink();
     this.scheduleAmbientMoment();
@@ -76,17 +112,35 @@ export class AnimationController {
     }
   }
 
-  public setBaseState(nextBase: "idle" | "sleep"): void {
+  public setBaseState(
+    nextBase: BaseAnimationState,
+    options: { transition?: AnimationStateName } = {}
+  ): void {
     if (this.baseState === nextBase) return;
+    const prevBase = this.baseState;
     this.baseState = nextBase;
     this.blinkQueued = false;
 
-    // Immediately switch if currently in a passive state; one-shots finish cleanly then settle to baseState
-    if (this.currentState === "idle" || this.currentState === "sleep" || this.currentState === "blink") {
-      this.transitionTo(nextBase);
+    // While dragging, record the new authoritative baseState and keep static drag_03 visible until release.
+    if (this.dragging) {
+      return;
     }
 
-    if (nextBase === "sleep") {
+    // Immediately switch if currently in a passive state; one-shots finish cleanly then settle to baseState
+    if (isPassiveState(this.currentState)) {
+      if (
+        options.transition &&
+        prevBase === "idle" &&
+        nextBase === "sleep" &&
+        options.transition in this.store.manifest.states
+      ) {
+        this.transitionTo(options.transition);
+      } else {
+        this.transitionTo(nextBase);
+      }
+    }
+
+    if (nextBase !== "idle") {
       this.clearBlinkTimer();
       this.clearMomentTimer();
     } else if (!this.suspended) {
@@ -98,29 +152,101 @@ export class AnimationController {
   /**
    * Play a specific animation state.
    * Priority rules:
-   *  - "click" interrupts anything immediately.
-   *  - "wave" / "happy" interrupt passive states (idle/blink/sleep) but won't override an active click.
-   *  - "blink" never interrupts click, wave, happy, or sleep.
+   *  - Active drag holds static drag_03.png until endDrag() and cannot be interrupted.
+   *  - "click" interrupts non-drag states immediately.
+   *  - Other expressive one-shots won't override an active click or drag.
+   *  - "blink" never interrupts non-idle states.
    */
   public play(state: AnimationStateName): void {
+    if (this.dragging) return;
+    if (!(state in this.store.manifest.states)) return;
+
     if (state === "blink") {
       if (this.currentState !== "idle") return;
       this.transitionTo("blink");
       return;
     }
 
-    if ((state === "wave" || state === "happy") && this.currentState === "click") {
+    if (
+      state !== "click" &&
+      state !== "drag" &&
+      (this.currentState === "click" || this.currentState === "drag")
+    ) {
       return;
     }
 
-    if (state === "sleep") {
-      this.baseState = "sleep";
-    } else if (state === "idle") {
-      this.baseState = "idle";
+    if (state === "sleep" || state === "late_night" || state === "idle") {
+      this.baseState = state;
     }
 
     this.blinkQueued = false;
     this.transitionTo(state);
+  }
+
+  /**
+   * Enters static drag hold showing ONLY drag_03.png (0-based frameIndex = 2) with zero looping,
+   * remembering the exact pre-drag state so endDrag() restores it without flicker.
+   */
+  public startDrag(): void {
+    if (this.dragging) return;
+    if (!("drag" in this.store.manifest.states)) return;
+
+    this.preDragSnapshot = {
+      state: this.currentState,
+      frameIndex: this.frameIndex,
+      baseState: this.baseState,
+    };
+    this.dragging = true;
+    this.blinkQueued = false;
+    const seq = ++this.transitionSeq;
+    this.clearTimers();
+
+    this.currentState = "drag";
+    this.frameIndex = 2; // drag_03.png
+
+    if (!this.store.hasStateLoaded("drag")) {
+      void this.store.ensureStateLoaded("drag").then(() => {
+        if (!this.dragging || this.transitionSeq !== seq || this.suspended) return;
+        this.notifyFrame();
+      });
+    }
+    this.notifyFrame();
+  }
+
+  /**
+   * Exits drag immediately and restores the exact state Piku was in before dragging
+   * (or the updated authoritative baseState if a state-hint arrived mid-drag).
+   */
+  public endDrag(): void {
+    if (!this.dragging) {
+      if (this.currentState === "drag") {
+        this.transitionTo(this.baseState);
+      }
+      return;
+    }
+
+    const prev = this.preDragSnapshot;
+    this.dragging = false;
+    this.preDragSnapshot = null;
+    this.blinkQueued = false;
+    ++this.transitionSeq;
+    this.clearTimers();
+
+    if (prev && this.baseState === prev.baseState && prev.state in this.store.manifest.states) {
+      const cfg = this.store.manifest.states[prev.state];
+      this.currentState = prev.state;
+      this.frameIndex = Math.min(Math.max(0, prev.frameIndex), Math.max(0, cfg.frames - 1));
+    } else {
+      this.currentState = this.baseState;
+      this.frameIndex = 0;
+    }
+
+    this.notifyFrame();
+    if (!this.suspended) {
+      this.scheduleNextFrame();
+      this.scheduleBlink();
+      this.scheduleAmbientMoment();
+    }
   }
 
   public setAmbientMomentsEnabled(enabled: boolean): void {
@@ -182,6 +308,21 @@ export class AnimationController {
   }
 
   private transitionTo(state: AnimationStateName): void {
+    if (!(state in this.store.manifest.states)) return;
+    const seq = ++this.transitionSeq;
+
+    if (!this.store.hasStateLoaded(state)) {
+      void this.store.ensureStateLoaded(state).then(() => {
+        if (this.transitionSeq !== seq || this.suspended) return;
+        this.applyTransition(state);
+      });
+      return;
+    }
+
+    this.applyTransition(state);
+  }
+
+  private applyTransition(state: AnimationStateName): void {
     this.currentState = state;
     this.frameIndex = 0;
     this.clearFrameTimer();
@@ -231,10 +372,9 @@ export class AnimationController {
       return;
     }
 
-    // One-shot animation finished -> return cleanly to baseState (or manifest next)
-    const fallbackNext: AnimationStateName =
-      this.baseState === "sleep" ? "sleep" : cfg.next ?? this.baseState;
-    this.transitionTo(fallbackNext);
+    // One-shot animation finished -> always settle cleanly to the authoritative baseState
+    // (prevents e.g. mid-yawn wake-up from falling back into "sleep" via manifest next)
+    this.transitionTo(this.baseState);
   }
 
   private scheduleBlink(): void {

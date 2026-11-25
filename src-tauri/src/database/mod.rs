@@ -91,7 +91,7 @@ impl Default for AppSettings {
             idle_threshold_secs: 300,
             cute_moments_enabled: true,
             cute_frequency: "normal".to_string(),
-            launch_on_startup: false,
+            launch_on_startup: true,
         }
     }
 }
@@ -1318,13 +1318,16 @@ mod tests {
         let dir = unique_test_dir("settings_preserve");
         let db = Database::open(&dir).unwrap();
 
+        // Fresh DB defaults to launch_on_startup = true
+        assert!(db.try_load_settings().unwrap().launch_on_startup);
+
         // Set non-default user preferences
         db.update_settings(AppSettingsPatch {
             pet_size: Some(160),
             idle_threshold_secs: Some(180),
             cute_moments_enabled: Some(false),
             cute_frequency: Some("low".to_string()),
-            launch_on_startup: Some(true),
+            launch_on_startup: Some(false),
             ..Default::default()
         })
         .unwrap();
@@ -1348,7 +1351,7 @@ mod tests {
         assert_eq!(loaded.idle_threshold_secs, 180);
         assert!(!loaded.cute_moments_enabled);
         assert_eq!(loaded.cute_frequency, "low");
-        assert!(loaded.launch_on_startup);
+        assert!(!loaded.launch_on_startup);
 
         // Lock DB externally so write/read fails -> update_settings must propagate Err
         // and must NOT substitute defaults or overwrite valid settings.
@@ -1379,7 +1382,7 @@ mod tests {
         assert_eq!(after.pet_size, 160);
         assert_eq!(after.idle_threshold_secs, 180);
         assert!(!after.cute_moments_enabled);
-        assert!(after.launch_on_startup);
+        assert!(!after.launch_on_startup);
         assert_eq!((after.pet_x, after.pet_y), (512, 384));
 
         drop(db);

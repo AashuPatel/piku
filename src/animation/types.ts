@@ -4,7 +4,27 @@ export type AnimationStateName =
   | "sleep"
   | "wave"
   | "happy"
-  | "click";
+  | "click"
+  | "excited"
+  | "content"
+  | "blush"
+  | "curious"
+  | "thinking"
+  | "surprised"
+  | "focused"
+  | "yawn"
+  | "drag"
+  | "working"
+  | "break"
+  | "late_night"
+  | "celebration"
+  | "snack"
+  | "tea"
+  | "cloud"
+  | "stretch"
+  | "peek";
+
+export type BaseAnimationState = "idle" | "sleep" | "late_night";
 
 export interface AnimationStateConfig {
   frames: number;
@@ -39,6 +59,6 @@ export interface FrameSnapshot {
 }
 
 export interface CuteMoment {
-  animation: "wave" | "happy";
+  animation: AnimationStateName;
   message: string;
 }

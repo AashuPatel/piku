@@ -15,23 +15,42 @@ interface PetCanvasProps {
 }
 
 /**
- * Dynamic grounding-shadow scale factor for airborne animation frames
- * (happy frames 02..04 and click spring frame 04).
+ * Dynamic grounding-shadow scale factor calibrated to the 24 production animations.
  */
 function shadowScaleForFrame(snap: FrameSnapshot): { scaleX: number; alpha: number } {
+  if (snap.state === "peek") {
+    return { scaleX: 0, alpha: 0 };
+  }
+  if (snap.state === "late_night") {
+    return { scaleX: 1.32, alpha: 0.14 };
+  }
+  if (snap.state === "working") {
+    return { scaleX: 1.15, alpha: 0.12 };
+  }
   if (snap.state === "sleep") {
-    return { scaleX: 1.24, alpha: 0.14 };
+    return snap.frameIndex >= 3
+      ? { scaleX: 1.24, alpha: 0.14 }
+      : { scaleX: 1.0, alpha: 0.12 };
   }
   if (snap.state === "happy") {
-    if (snap.frameIndex === 1) return { scaleX: 0.84, alpha: 0.1 };
-    if (snap.frameIndex === 2) return { scaleX: 0.66, alpha: 0.075 };
-    if (snap.frameIndex === 3) return { scaleX: 0.8, alpha: 0.095 };
-    if (snap.frameIndex === 0 || snap.frameIndex === 4) return { scaleX: 1.08, alpha: 0.14 };
+    if (snap.frameIndex === 1) return { scaleX: 1.08, alpha: 0.13 };
+    if (snap.frameIndex === 2) return { scaleX: 0.78, alpha: 0.09 };
+    if (snap.frameIndex === 3) return { scaleX: 0.66, alpha: 0.075 };
+    if (snap.frameIndex === 4) return { scaleX: 1.06, alpha: 0.13 };
   }
   if (snap.state === "click") {
-    if (snap.frameIndex === 1) return { scaleX: 1.12, alpha: 0.14 };
-    if (snap.frameIndex === 2) return { scaleX: 1.2, alpha: 0.15 };
-    if (snap.frameIndex === 3) return { scaleX: 0.74, alpha: 0.085 };
+    if (snap.frameIndex === 1) return { scaleX: 1.08, alpha: 0.13 };
+    if (snap.frameIndex === 2 || snap.frameIndex === 3) return { scaleX: 1.18, alpha: 0.15 };
+    if (snap.frameIndex === 4) return { scaleX: 0.72, alpha: 0.08 };
+  }
+  if (snap.state === "excited" && snap.frameIndex === 3) {
+    return { scaleX: 0.68, alpha: 0.075 };
+  }
+  if (snap.state === "celebration" && snap.frameIndex === 3) {
+    return { scaleX: 0.64, alpha: 0.05 };
+  }
+  if (snap.state === "drag" && snap.frameIndex >= 2 && snap.frameIndex <= 4) {
+    return { scaleX: 0.72, alpha: 0.08 };
   }
   return { scaleX: 1.0, alpha: 0.12 };
 }

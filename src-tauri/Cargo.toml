@@ -1,6 +1,6 @@
 [package]
 name = "piku"
-version = "0.1.0"
+version = "0.2.0"
 description = "Piku — lightweight local-first Windows desktop pet and screen-time companion"
 authors = ["Piku"]
 edition = "2021"

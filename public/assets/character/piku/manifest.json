@@ -1,7 +1,7 @@
 {
   "character": "piku",
-  "version": "1.0.0",
-  "assetKind": "placeholder",
+  "version": "2.0.0",
+  "assetKind": "production",
   "frameSize": {
     "width": 256,
     "height": 256
@@ -19,17 +19,11 @@
       "path": "idle/idle_{nn}.png"
     },
     "blink": {
-      "frames": 4,
+      "frames": 6,
       "fps": 10,
       "loop": false,
       "path": "blink/blink_{nn}.png",
       "next": "idle"
-    },
-    "sleep": {
-      "frames": 6,
-      "fps": 4,
-      "loop": true,
-      "path": "sleep/sleep_{nn}.png"
     },
     "wave": {
       "frames": 6,
@@ -45,11 +39,141 @@
       "path": "happy/happy_{nn}.png",
       "next": "idle"
     },
+    "sleep": {
+      "frames": 6,
+      "fps": 4,
+      "loop": true,
+      "path": "sleep/sleep_{nn}.png"
+    },
     "click": {
       "frames": 6,
       "fps": 12,
       "loop": false,
-      "path": "click/click_{nn}.png",
+      "path": "click_reaction/click_reaction_{nn}.png",
+      "next": "idle"
+    },
+    "excited": {
+      "frames": 6,
+      "fps": 10,
+      "loop": false,
+      "path": "excited/excited_{nn}.png",
+      "next": "idle"
+    },
+    "content": {
+      "frames": 6,
+      "fps": 6,
+      "loop": false,
+      "path": "content/content_{nn}.png",
+      "next": "idle"
+    },
+    "blush": {
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "path": "blush/blush_{nn}.png",
+      "next": "idle"
+    },
+    "curious": {
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "path": "curious/curious_{nn}.png",
+      "next": "idle"
+    },
+    "thinking": {
+      "frames": 6,
+      "fps": 7,
+      "loop": false,
+      "path": "thinking/thinking_{nn}.png",
+      "next": "idle"
+    },
+    "surprised": {
+      "frames": 6,
+      "fps": 10,
+      "loop": false,
+      "path": "surprised/surprised_{nn}.png",
+      "next": "idle"
+    },
+    "focused": {
+      "frames": 6,
+      "fps": 7,
+      "loop": false,
+      "path": "focused/focused_{nn}.png",
+      "next": "idle"
+    },
+    "yawn": {
+      "frames": 6,
+      "fps": 6,
+      "loop": false,
+      "path": "yawn/yawn_{nn}.png",
+      "next": "sleep"
+    },
+    "drag": {
+      "frames": 6,
+      "fps": 10,
+      "loop": true,
+      "path": "drag/drag_{nn}.png"
+    },
+    "working": {
+      "frames": 6,
+      "fps": 7,
+      "loop": false,
+      "path": "working/working_{nn}.png",
+      "next": "idle"
+    },
+    "break": {
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "path": "break/break_{nn}.png",
+      "next": "idle"
+    },
+    "late_night": {
+      "frames": 6,
+      "fps": 4,
+      "loop": true,
+      "path": "late_night/late_night_{nn}.png"
+    },
+    "celebration": {
+      "frames": 6,
+      "fps": 10,
+      "loop": false,
+      "path": "celebration/celebration_{nn}.png",
+      "next": "idle"
+    },
+    "snack": {
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "path": "snack/snack_{nn}.png",
+      "next": "idle"
+    },
+    "tea": {
+      "frames": 6,
+      "fps": 7,
+      "loop": false,
+      "path": "tea/tea_{nn}.png",
+      "next": "idle"
+    },
+    "cloud": {
+      "frames": 6,
+      "fps": 7,
+      "loop": false,
+      "path": "cloud/cloud_{nn}.png",
+      "next": "idle"
+    },
+    "stretch": {
+      "frames": 6,
+      "fps": 8,
+      "loop": false,
+      "path": "stretch/stretch_{nn}.png",
+      "next": "idle"
+    },
+    "peek": {
+      "frames": 6,
+      "fps": 9,
+      "loop": false,
+      "path": "peek/peek_{nn}.png",
       "next": "idle"
     }
   }

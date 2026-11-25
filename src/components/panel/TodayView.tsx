@@ -185,6 +185,12 @@ export function TodayView({
           </div>
         ) : error ? (
           <div className="today-state-box" role="alert">
+            <img
+              src="/assets/character/piku/static/error.png"
+              alt=""
+              className="state-illustration"
+              draggable={false}
+            />
             <p className="today-state-title">Couldn&apos;t peek at today&apos;s notes</p>
             <p className="today-state-text">
               Piku had a tiny hiccup reading local usage data.
@@ -196,6 +202,12 @@ export function TodayView({
           </div>
         ) : isEmpty ? (
           <div className="today-state-box">
+            <img
+              src="/assets/character/piku/static/empty_state.png"
+              alt=""
+              className="state-illustration"
+              draggable={false}
+            />
             <p className="today-state-title">Still quiet here today</p>
             <p className="today-state-text">
               As you spend time in your apps, Piku will gently jot them down in your little journal.
